@@ -1,1 +1,1 @@
-# Template
+# Ansible Playbook to deploy Namada Node
