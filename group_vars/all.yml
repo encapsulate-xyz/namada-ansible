@@ -2,25 +2,29 @@
 # maintains ports, bianry or repo urls
 
 org: encapsulate
+domain_regex: ^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$
+monitor_server_dns: monitor.encapsulate.xyz
+ansible_port: 8192
+
+architecture_map:
+  x86_64: amd64
+  aarch64: arm64
+tmp_dir: /tmp
 
 default_node_types:
   - validator
   - default
 
-sui:
-  validator:
-    source_url: https://releases.sui.io
+cometbft:
+  source_url: https://github.com/cometbft/cometbft/releases/download
+  file_extension: tar.gz
+
+namada:
+  source_url: https://github.com/anoma/namada/releases/download
+  file_extension: tar.gz
+  validator:   
     ports:
-      server_listen_port: 9191
-      metrics_port: 9186
-  fullnode:
-    version: 88888888888
-    source_url: https://releases.sui.io
-    ports:
-      server_listen_port: 9191
-      metrics_port: 9186
-  bridge:
-    source_url: https://releases.sui.io
-    ports:
-      server_listen_port: 9191
-      metrics_port: 9186
+      p2p_port: 26656
+      proxy_port: 26658
+      rpc_port: 26657
+      prometheus_port: 26660
