@@ -1,0 +1,33 @@
+---
+node_ufw_rules:
+  validator:
+    - port: "{{ namada.validator.ports.p2p_port }}"
+      proto: tcp
+      rule: allow
+      from: any
+      comment: p2p_port
+
+    - port: "{{ namada.validator.ports.prometheus_port }}"
+      proto: tcp
+      rule: allow
+      from: "{{ monitor_server_dns }}"
+      comment: prometheus_port
+
+  fullnode:
+    - port: "{{ namada.fullnode.ports.p2p_port }}"
+      proto: tcp
+      rule: allow
+      from: any
+      comment: p2p_port
+
+    - port: "{{ namada.fullnode.ports.prometheus_port }}"
+      proto: tcp
+      rule: allow
+      from: "{{ monitor_server_dns }}"
+      comment: prometheus_port
+
+    - port: "{{ namada.fullnode.ports.rpc_port }}"
+      proto: tcp
+      rule: limit
+      from: any
+      comment: rpc_port

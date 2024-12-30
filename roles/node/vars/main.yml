@@ -1,0 +1,18 @@
+---
+# maintains file name, binary names, and anything which is not a directory or path
+
+# config file names
+node_config_file_name: config.toml
+
+node_node_key_file_name: node_key.json
+node_priv_validator_state_file_name: priv_validator_state.json
+
+# binary names
+node_service_default_binary_name:
+  - namada
+  - namadac
+  - namadan
+  - namadaw
+node_cometbft_default_binary_name: cometbft
+
+node_environment_general_file_name: "{{ service_identifier }}.env"
