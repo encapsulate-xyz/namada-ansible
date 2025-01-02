@@ -16,3 +16,21 @@ node_service_default_binary_name:
 node_cometbft_default_binary_name: cometbft
 
 node_environment_general_file_name: "{{ service_identifier }}.env"
+
+node_space_optimization_settings:
+  indexer: "null"
+
+node_type_settings:
+  proxy_app:
+    address:
+      default: tcp://127.0.0.1
+  rpc:
+    address:
+      validator: tcp://127.0.0.1
+      fullnode: tcp://0.0.0.0
+  p2p:
+    address:
+      default: tcp://0.0.0.0
+  double_sign_check_height:
+    validator: 10
+    fullnode: 0
