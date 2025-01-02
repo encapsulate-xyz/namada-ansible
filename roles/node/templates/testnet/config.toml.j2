@@ -2,33 +2,33 @@ wasm_dir = "{{ node_wasm_dir }}"
 
 [ledger]
 genesis_time = "2024-12-05T23:07:03.000000000+00:00"
-chain_id = "housefire-alpaca.cc0d3e0c033be"
+chain_id = "{{ namada[type].chain_id }}"
 
 [ledger.shell]
 base_dir = "{{ node_network_dir }}"
 storage_read_past_height_limit = 3600
 db_dir = "{{ node_data_dir }}"
 cometbft_dir = "{{ node_cometbft_dir }}"
-tendermint_mode = "Full"
+tendermint_mode = "{{ 'Full' if type == 'fullnode' else 'Validator' }}"
 
 [ledger.cometbft]
-proxy_app = "tcp://127.0.0.1:{{ namada[type].ports.proxy_port }}"
+proxy_app = "{{ node_type_settings.proxy_app.address.default }}:{{ namada[type].ports.proxy_port }}"
 moniker = "{{ org }}"
 fast_sync = true
 db_backend = "goleveldb"
-db_dir = "data"
+db_dir = "{{ node_cometbft_data_dir }}"
 log_level = "info"
 log_format = "plain"
-genesis_file = "config/genesis.json"
-priv_validator_key_file = "config/priv_validator_key.json"
+genesis_file = "{{ node_cometbft_config_dir }}/genesis.json"
+priv_validator_key_file = {{ node_cometbft_config_dir }}config/priv_validator_key.json"
 priv_validator_state_file = "data/priv_validator_state.json"
 priv_validator_laddr = ""
-node_key_file = "config/node_key.json"
+node_key_file = {{ node_cometbft_config_dir }}config/node_key.json"
 abci = "socket"
 filter_peers = false
 
 [ledger.cometbft.rpc]
-laddr = "tcp://127.0.0.1:{{ namada[type].ports.rpc_port }}"
+laddr = "{{ node_type_settings.rpc.address[type] }}:{{ namada[type].ports.rpc_port }}"
 cors_allowed_origins = []
 cors_allowed_methods = ["HEAD", "GET", "POST"]
 cors_allowed_headers = ["Origin", "Accept", "Content-Type", "X-Requested-With", "X-Server-Time"]
@@ -46,12 +46,12 @@ tls_key_file = ""
 pprof_laddr = ""
 
 [ledger.cometbft.p2p]
-laddr = "tcp://0.0.0.0:{{ namada[type].ports.p2p_port }}"
+laddr = "{{ node_type_settings.p2p.address.default }}:{{ namada[type].ports.p2p_port }}"
 external_address = ""
 seeds = ""
 persistent_peers = "tcp://0ed550f6f3acc48505fb194ad7966d923db5f7bb@167.99.185.160:26656,tcp://3e254524b630ee5a1d0df6aa40b4ed1370b5e51a@74.50.93.254:26656"
 upnp = false
-addr_book_file = "config/addrbook.json"
+addr_book_file = "{{ node_cometbft_config_dir }}/addrbook.json"
 addr_book_strict = true
 max_num_inbound_peers = 40
 max_num_outbound_peers = 10
@@ -80,7 +80,7 @@ max_tx_bytes = 1048576
 max_batch_bytes = 0
 
 [ledger.cometbft.consensus]
-wal_file = "data/cs.wal/wal"
+wal_file = "{{ node_cometbft_data_dir }}/cs.wal/wal"
 timeout_propose = "3000ms"
 timeout_propose_delta = "500ms"
 timeout_prevote = "1000ms"
@@ -99,7 +99,7 @@ peer_query_maj23_sleep_duration = "2000ms"
 discard_abci_responses = false
 
 [ledger.cometbft.tx_index]
-indexer = "null"
+indexer = "{{ node_space_optimization_settings.indexer }}"
 
 [ledger.cometbft.instrumentation]
 prometheus = true
