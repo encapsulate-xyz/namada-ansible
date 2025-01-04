@@ -20,10 +20,10 @@ db_dir = "{{ node_cometbft_data_dir }}"
 log_level = "info"
 log_format = "plain"
 genesis_file = "{{ node_cometbft_config_dir }}/genesis.json"
-priv_validator_key_file = {{ node_cometbft_config_dir }}config/priv_validator_key.json"
-priv_validator_state_file = "data/priv_validator_state.json"
+priv_validator_key_file = "{{ node_cometbft_config_dir }}/priv_validator_key.json"
+priv_validator_state_file = "{{ node_cometbft_data_dir }}/priv_validator_state.json"
 priv_validator_laddr = ""
-node_key_file = {{ node_cometbft_config_dir }}config/node_key.json"
+node_key_file = "{{ node_cometbft_config_dir }}/node_key.json"
 abci = "socket"
 filter_peers = false
 
