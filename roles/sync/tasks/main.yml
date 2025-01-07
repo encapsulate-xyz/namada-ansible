@@ -1,0 +1,93 @@
+---
+- name: Stop service
+  ansible.builtin.systemd:
+    name: "{{ service_identifier }}"
+    state: stopped
+
+- name: Backup validator state file
+  block:
+    - name: Backup validator state file
+      ansible.builtin.copy:
+        src: "{{ sync_priv_validator_state_file_path }}"
+        dest: "{{ sync_cometbft_dir }}"
+        remote_src: true
+        owner: "{{ service_identifier }}"
+        group: "{{ service_identifier }}"
+        mode: "0644"
+  rescue:
+    - name: Handle missing file
+      ansible.builtin.debug:
+        msg: Source file does not exist
+
+- name: Delete data directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ sync_data_dir }}"
+    - "{{ sync_wasm_dir }}"
+    - "{{ sync_cometbft_data_dir }}"
+
+- name: Handle Download and extract snapshots
+  block:
+    - name: Download and Extract snapshot
+      ansible.builtin.shell: |
+        set -o pipefail
+        curl -o - -L {{ snapshot_url | default(vars[project].snapshot_url) }} | lz4 -c -d - | tar -x -C {{ sync_home_dir }}
+      async: 10000
+      poll: 10
+      args:
+        executable: /bin/bash
+        creates: "{{ sync_cometbft_data_dir }}"
+
+- name: Handle Restore validator state file
+  block:
+    - name: Restore validator state file
+      ansible.builtin.copy:
+        src: "{{ sync_cometbft_dir }}/{{ sync_priv_validator_state_file_name }}"
+        dest: "{{ sync_cometbft_data_dir }}"
+        remote_src: true
+        owner: "{{ service_identifier }}"
+        group: "{{ service_identifier }}"
+        mode: "0644"
+
+    - name: Remove validator state file after copy
+      ansible.builtin.file:
+        path: "{{ sync_cometbft_dir }}/{{ sync_priv_validator_state_file_name }}"
+        state: absent
+  rescue:
+    - name: Handle missing file
+      ansible.builtin.debug:
+        msg: Source file does not exist
+
+- name: Rename db folder to data
+  ansible.builtin.command:
+    cmd: mv {{ sync_home_dir }}/db {{ sync_data_dir }}
+    creates: "{{ sync_data_dir }}"
+    removes: "{{ sync_home_dir }}/db"
+
+- name: Set ownership for data directory
+  ansible.builtin.file:
+    path: "{{ sync_data_dir }}"
+    owner: "{{ service_identifier }}"
+    group: "{{ service_identifier }}"
+    recurse: true
+
+- name: Set ownership for wasm directory
+  ansible.builtin.file:
+    path: "{{ sync_wasm_dir }}"
+    owner: "{{ service_identifier }}"
+    group: "{{ service_identifier }}"
+    recurse: true
+
+- name: Set ownership for cometbft data directory
+  ansible.builtin.file:
+    path: "{{ sync_cometbft_data_dir }}"
+    owner: "{{ service_identifier }}"
+    group: "{{ service_identifier }}"
+    recurse: true
+
+- name: Restart service
+  ansible.builtin.systemd:
+    name: "{{ service_identifier }}"
+    state: restarted
