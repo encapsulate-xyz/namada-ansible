@@ -7,6 +7,14 @@
   ansible.builtin.include_tasks: tasks/apply_ufw_rules.yml
   loop: "{{ node_ufw_rules[type] }}"
 
+- name: Set seeds
+  ansible.builtin.set_fact:
+    seeds: "{{ lookup('file', 'files/{{ env }}/seeds.txt').splitlines() | join(',') }}"
+
+- name: Set peers
+  ansible.builtin.set_fact:
+    peers: "{{ lookup('file', 'files/{{ env }}/peers.txt').splitlines() | join(',') }}"
+
 - name: Include user creation and directories task
   ansible.builtin.include_tasks: tasks/create_user_and_directories.yml
   vars:
@@ -18,30 +26,30 @@
   ansible.builtin.include_tasks: tasks/extract_binary.yml
   vars:
     arch_details: "{{ ansible_system | lower }}_{{ system_architecture }}"
-    build_suffix_url: "v{{ namada[type].cometbft.version }}/{{ node_cometbft_default_binary_name }}_{{ namada[type].cometbft.version }}"
+    build_suffix_url: "v{{ namada[type].cometbft.version }}/{{ node_binaries.cometbft_default.default_binary_name }}_{{ namada[type].cometbft.version }}"
     source_url: "{{ cometbft.source_url }}"
     suffix_url: "{{ build_suffix_url }}_{{ arch_details }}.{{ cometbft.file_extension }}"
     path_mapping: 
-      - extracted_path: "{{ node_cometbft_default_binary_name }}"
-        dest_path: "{{ node_bin_dir }}/{{ node_cometbft_default_binary_name }}"
+      - extracted_path: "{{ node_binaries.cometbft_default.default_binary_name }}"
+        dest_path: "{{ node_bin_dir }}/{{ node_binaries.cometbft_default.default_binary_name }}"
 
 - name: Install Namada
   ansible.builtin.include_tasks: tasks/extract_binary.yml
   vars:
     arch_details: "{{ ansible_system }}-{{ ansible_architecture }}"
-    build_suffix_url: "{{ namada[type].version }}/{{ node_service_default_binary_name[0] }}-{{ namada[type].version }}"
+    build_suffix_url: "{{ namada[type].version }}/{{ node_binaries.namada_default.default_binary_name }}-{{ namada[type].version }}"
     source_url: "{{ namada.source_url }}"
     suffix_url: "{{ build_suffix_url }}-{{ arch_details }}.{{ namada.file_extension }}"
-    extracted_dir: "{{ node_service_default_binary_name[0] }}-{{ namada[type].version }}-{{ arch_details }}"
+    extracted_dir: "{{ node_binaries.namada_default.default_binary_name }}-{{ namada[type].version }}-{{ arch_details }}"
     path_mapping:
-      - extracted_path: "{{ extracted_dir }}/{{ node_service_default_binary_name[0] }}"
+      - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_default.default_binary_name }}"
         dest_path: "{{ node_bin_dir }}/{{ service_identifier }}"
-      - extracted_path: "{{ extracted_dir }}/{{ node_service_default_binary_name[1] }}"
-        dest_path: "{{ node_bin_dir }}/{{ node_service_default_binary_name[1] }}"
-      - extracted_path: "{{ extracted_dir }}/{{ node_service_default_binary_name[2] }}"
-        dest_path: "{{ node_bin_dir }}/{{ node_service_default_binary_name[2] }}"
-      - extracted_path: "{{ extracted_dir }}/{{ node_service_default_binary_name[3] }}"
-        dest_path: "{{ node_bin_dir }}/{{ node_service_default_binary_name[3] }}"
+      - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_node.default_binary_name }}"
+        dest_path: "{{ node_bin_dir }}/{{ node_binaries.namada_node.default_binary_name }}"
+      - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_client.default_binary_name }}"
+        dest_path: "{{ node_bin_dir }}/{{ node_binaries.namada_client.default_binary_name }}"
+      - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_worker.default_binary_name }}"
+        dest_path: "{{ node_bin_dir }}/{{ node_binaries.namada_worker.default_binary_name }}"
 
 - name: Join network
   ansible.builtin.command: >
