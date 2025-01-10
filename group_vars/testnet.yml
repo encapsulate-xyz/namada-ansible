@@ -7,4 +7,4 @@ namada:
     network_config_server: https://github.com/vknowable/namada-campfire/releases/download/housefire-alpaca
     cometbft:
       version: 0.37.11
-  snapshot_url: https://server-4.itrocket.net/testnet/namada/namada_2025-01-07_346982_snap.tar.lz4
+  snapshot_url: https://testnet.housefire.tududes.com/_2025-01-10T06.00.tar.lz4
