@@ -1,0 +1,9 @@
+---
+sync_home_dir: /opt/{{ service_identifier }}
+sync_cometbft_dir: /opt/{{ service_identifier }}/cometbft
+
+sync_data_dir: "{{ sync_home_dir }}/data"
+sync_cometbft_data_dir: "{{ sync_cometbft_dir }}/data"
+sync_wasm_dir: "{{ sync_home_dir }}/wasm"
+
+sync_priv_validator_state_file_path: "{{ sync_cometbft_data_dir }}/{{ sync_priv_validator_state_file_name }}"

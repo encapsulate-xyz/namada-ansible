@@ -1,0 +1,122 @@
+---
+- name: Include network UFW rules vars file
+  ansible.builtin.include_vars:
+    file: vars/ufw_rules.yml
+
+- name: Apply UFW rules
+  ansible.builtin.include_tasks: tasks/apply_ufw_rules.yml
+  loop: "{{ node_ufw_rules[type] }}"
+
+- name: Set seeds
+  ansible.builtin.set_fact:
+    seeds: "{{ lookup('file', 'files/{{ env }}/seeds.txt').splitlines() | join(',') }}"
+
+- name: Set peers
+  ansible.builtin.set_fact:
+    peers: "{{ lookup('file', 'files/{{ env }}/peers.txt').splitlines() | join(',') }}"
+
+- name: Include user creation and directories task
+  ansible.builtin.include_tasks: tasks/create_user_and_directories.yml
+  vars:
+    home: "{{ node_home_dir }}"
+    directories: "{{ node_directories }}"
+    log_file_path: "{{ node_log_file_path }}"
+
+- name: Install Cometbft
+  ansible.builtin.include_tasks: tasks/extract_binary.yml
+  vars:
+    arch_details: "{{ ansible_system | lower }}_{{ system_architecture }}"
+    build_suffix_url: "v{{ namada[type].cometbft.version }}/{{ node_binaries.cometbft_default.default_binary_name }}_{{ namada[type].cometbft.version }}"
+    source_url: "{{ cometbft.source_url }}"
+    suffix_url: "{{ build_suffix_url }}_{{ arch_details }}.{{ cometbft.file_extension }}"
+    path_mapping: 
+      - extracted_path: "{{ node_binaries.cometbft_default.default_binary_name }}"
+        dest_path: "{{ node_bin_dir }}/{{ node_binaries.cometbft_default.default_binary_name }}"
+
+- name: Install Namada
+  ansible.builtin.include_tasks: tasks/extract_binary.yml
+  vars:
+    arch_details: "{{ ansible_system }}-{{ ansible_architecture }}"
+    build_suffix_url: "{{ namada[type].version }}/{{ node_binaries.namada_default.default_binary_name }}-{{ namada[type].version }}"
+    source_url: "{{ namada.source_url }}"
+    suffix_url: "{{ build_suffix_url }}-{{ arch_details }}.{{ namada.file_extension }}"
+    extracted_dir: "{{ node_binaries.namada_default.default_binary_name }}-{{ namada[type].version }}-{{ arch_details }}"
+    path_mapping:
+      - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_default.default_binary_name }}"
+        dest_path: "{{ node_bin_dir }}/{{ service_identifier }}"
+      - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_node.default_binary_name }}"
+        dest_path: "{{ node_bin_dir }}/{{ node_binaries.namada_node.default_binary_name }}"
+      - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_client.default_binary_name }}"
+        dest_path: "{{ node_bin_dir }}/{{ node_binaries.namada_client.default_binary_name }}"
+      - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_worker.default_binary_name }}"
+        dest_path: "{{ node_bin_dir }}/{{ node_binaries.namada_worker.default_binary_name }}"
+
+- name: Join network
+  ansible.builtin.command: >
+    {{ node_bin_dir }}/{{ service_identifier }} client utils join-network
+    --chain-id {{ namada[type].chain_id }}
+    --add-persistent-peers
+    --base-dir {{ node_config_dir }}
+    --wasm-dir {{ node_wasm_dir }}
+  environment:
+    NAMADA_NETWORK_CONFIGS_SERVER: "{{ namada[type].network_config_server }}"
+  args:
+    creates: "{{ node_network_dir }}"
+
+- name: Fetch secrets from HCP Vault and save to files
+  when:
+    - type == 'validator'
+    - fetch_validator_keys | default(false) | bool
+  block:
+    - name: Fetch priv validator key and save
+      ansible.builtin.include_tasks: tasks/get_and_save_vault_secret.yml
+      vars:
+        vault_secret_source_path: "{{ project }}/{{ org }}/{{ type }}/{{ node_priv_validator_key_file_name }}"
+        secret_destination_path: "{{ node_priv_validator_key_path }}"
+        secret_type: json
+
+    - name: Fetch node key and save
+      ansible.builtin.include_tasks: tasks/get_and_save_vault_secret.yml
+      vars:
+        vault_secret_source_path: "{{ project }}/{{ org }}/{{ type }}/{{ node_node_key_file_name }}"
+        secret_destination_path: "{{ node_node_key_path }}"
+        secret_type: json
+
+- name: Set ownership for directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: "{{ service_identifier }}"
+    group: "{{ service_identifier }}"
+    recurse: true
+  loop:
+    - "{{ node_data_dir }}"
+    - "{{ node_config_dir }}"
+
+- name: Copy configuration files
+  ansible.builtin.template:
+    src: "{{ env }}/config.toml.j2"
+    dest: "{{ node_config_file_path }}"
+    owner: "{{ service_identifier }}"
+    group: "{{ service_identifier }}"
+    mode: "0644"
+  notify:
+    - Restart service
+
+- name: Copy general environment file
+  ansible.builtin.template:
+    src: "general.env.j2"
+    dest: "{{ node_environment_general_file_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Copy systemd service file
+  ansible.builtin.template:
+    src: "{{ env }}/systemd.service.j2"
+    dest: /etc/systemd/system/{{ service_identifier }}.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Reload service
+    - Restart service

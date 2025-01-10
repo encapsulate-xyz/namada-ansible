@@ -1,0 +1,125 @@
+wasm_dir = "{{ node_wasm_dir }}"
+
+[ledger]
+genesis_time = "2024-12-05T23:07:03.000000000+00:00"
+chain_id = "{{ namada[type].chain_id }}"
+
+[ledger.shell]
+base_dir = "{{ node_network_dir }}"
+storage_read_past_height_limit = 3600
+db_dir = "{{ node_data_dir }}"
+cometbft_dir = "{{ node_cometbft_dir }}"
+tendermint_mode = "{{ 'Full' if type == 'fullnode' else 'Validator' }}"
+
+[ledger.cometbft]
+proxy_app = "{{ node_type_settings.proxy_app.address.default }}:{{ namada[type].ports.proxy_port }}"
+moniker = "{{ org }}"
+fast_sync = true
+db_backend = "goleveldb"
+db_dir = "{{ node_cometbft_data_dir }}"
+log_level = "info"
+log_format = "plain"
+genesis_file = "{{ node_cometbft_config_dir }}/genesis.json"
+priv_validator_key_file = "{{ node_cometbft_config_dir }}/priv_validator_key.json"
+priv_validator_state_file = "{{ node_cometbft_data_dir }}/priv_validator_state.json"
+priv_validator_laddr = ""
+node_key_file = "{{ node_cometbft_config_dir }}/node_key.json"
+abci = "socket"
+filter_peers = false
+
+[ledger.cometbft.rpc]
+laddr = "{{ node_type_settings.rpc.address[type] }}:{{ namada[type].ports.rpc_port }}"
+cors_allowed_origins = []
+cors_allowed_methods = ["HEAD", "GET", "POST"]
+cors_allowed_headers = ["Origin", "Accept", "Content-Type", "X-Requested-With", "X-Server-Time"]
+grpc_laddr = ""
+grpc_max_open_connections = 900
+unsafe = false
+max_open_connections = 900
+max_subscription_clients = 100
+max_subscriptions_per_client = 5
+timeout_broadcast_tx_commit = "10000ms"
+max_body_bytes = 1000000
+max_header_bytes = 1048576
+tls_cert_file = ""
+tls_key_file = ""
+pprof_laddr = ""
+
+[ledger.cometbft.p2p]
+laddr = "{{ node_type_settings.p2p.address.default }}:{{ namada[type].ports.p2p_port }}"
+external_address = "{{ node_sentry_settings.external_address[type] | default(inventory_hostname + ':' + namada[type].ports.p2p_port | string) }}"
+seeds = "{{ node_sentry_settings.seeds[type] | default(seeds) }}"
+persistent_peers = "{{ node_sentry_settings.persistent_peers[type] | default(peers) }}"
+upnp = false
+addr_book_file = "{{ node_cometbft_config_dir }}/addrbook.json"
+addr_book_strict = {{ (node_sentry_settings.addr_book_strict[type] | default(true)) | tojson }}
+max_num_inbound_peers = 40
+max_num_outbound_peers = 10
+unconditional_peer_ids = "{{ node_sentry_settings.unconditional_peer_ids[type] | default() }}"
+persistent_peers_max_dial_period = "0ms"
+flush_throttle_timeout = "100ms"
+max_packet_msg_payload_size = 1024
+send_rate = 5120000
+recv_rate = 5120000
+pex = {{ (node_sentry_settings.pex[type] | default(true)) | tojson }}
+seed_mode = false
+private_peer_ids = "{{ node_sentry_settings.private_peer_ids[type] | default() }}"
+allow_duplicate_ip = false
+handshake_timeout = "20000ms"
+dial_timeout = "3000ms"
+
+[ledger.cometbft.mempool]
+recheck = true
+broadcast = true
+wal_dir = ""
+size = 5000
+max_txs_bytes = 1073741824
+cache_size = 10000
+keep-invalid-txs-in-cache = false
+max_tx_bytes = 1048576
+max_batch_bytes = 0
+
+[ledger.cometbft.consensus]
+wal_file = "{{ node_cometbft_data_dir }}/cs.wal/wal"
+timeout_propose = "3000ms"
+timeout_propose_delta = "500ms"
+timeout_prevote = "1000ms"
+timeout_prevote_delta = "500ms"
+timeout_precommit = "1000ms"
+timeout_precommit_delta = "500ms"
+timeout_commit = "8000ms"
+double_sign_check_height = {{ node_type_settings.double_sign_check_height[type] }}
+skip_timeout_commit = false
+create_empty_blocks = true
+create_empty_blocks_interval = "0ms"
+peer_gossip_sleep_duration = "100ms"
+peer_query_maj23_sleep_duration = "2000ms"
+
+[ledger.cometbft.storage]
+discard_abci_responses = false
+
+[ledger.cometbft.tx_index]
+indexer = "{{ node_space_optimization_settings.indexer }}"
+
+[ledger.cometbft.instrumentation]
+prometheus = true
+prometheus_listen_addr = ":{{ namada[type].ports.prometheus_port }}"
+max_open_connections = 3
+namespace = "namada_tm"
+
+[ledger.cometbft.statesync]
+enable = false
+rpc_servers = ""
+trust_height = 0
+trust_hash = ""
+trust_period = "168h0m0s"
+discovery_time = "15000ms"
+temp_dir = ""
+
+[ledger.cometbft.fastsync]
+version = "v0"
+
+[ledger.ethereum_bridge]
+mode = "RemoteEndpoint"
+oracle_rpc_endpoint = "http://127.0.0.1:8545"
+channel_buffer_size = 1000

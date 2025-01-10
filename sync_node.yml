@@ -1,29 +1,28 @@
 ---
-- name: Set up sui bridge node
+- name: Sync node
   hosts: all
   become: true
-  gather_facts: false
+  gather_facts: true
   vars:
-    allowed_node_types: [bridge]
+    allowed_node_types: [validator, fullnode]
   vars_files:
     - group_vars/all.yml
-    - group_vars/vault.yml
     - group_vars/{{ env }}.yml
 
   pre_tasks:
-    - name: Setup Pre Tasks
+    - name: Setup environment and dependencies
       when: type in allowed_node_types
       block:
         - name: Include environment setup tasks
           ansible.builtin.include_tasks: tasks/setup_environment.yml
 
   tasks:
-    - name: Setup environment and run bridge role
+    - name: Run sync playbook
       when: type in allowed_node_types
       block:
         - name: Include common handlers
           ansible.builtin.include_role:
             name: common
-        - name: Include bridge role
+        - name: Include sync role
           ansible.builtin.include_role:
-            name: bridge
+            name: sync
