@@ -44,6 +44,10 @@ node_type_settings:
   double_sign_check_height:
     validator: 10
     fullnode: 0
+  ethereum_rpc:
+    address:
+      validator: http://127.0.0.1
+      fullnode: http://0.0.0.0
 
 ########################################################################################################################
 # SENTRY CONFIGURATION: change only if you wanna run validator in a sentry architecture

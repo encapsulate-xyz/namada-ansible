@@ -24,7 +24,8 @@ namada:
   file_extension: tar.gz
   validator:   
     ports:
-      p2p_port: 26656
-      proxy_port: 26658
-      rpc_port: 26657
-      prometheus_port: 26660
+      p2p_port: 20556
+      proxy_port: 20558
+      rpc_port: 20557
+      prometheus_port: 20560
+      ethereum_rpc_port: 20545
