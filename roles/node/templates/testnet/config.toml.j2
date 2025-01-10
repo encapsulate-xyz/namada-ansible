@@ -9,7 +9,7 @@ base_dir = "{{ node_network_dir }}"
 storage_read_past_height_limit = 3600
 db_dir = "{{ node_data_dir }}"
 cometbft_dir = "{{ node_cometbft_dir }}"
-tendermint_mode = "{{ 'Full' if type == 'fullnode' else 'Validator' }}"
+tendermint_mode = "Full"
 
 [ledger.cometbft]
 proxy_app = "{{ node_type_settings.proxy_app.address.default }}:{{ namada[type].ports.proxy_port }}"
@@ -121,5 +121,5 @@ version = "v0"
 
 [ledger.ethereum_bridge]
 mode = "RemoteEndpoint"
-oracle_rpc_endpoint = "http://127.0.0.1:8545"
+oracle_rpc_endpoint = "{{ node_type_settings.ethereum_rpc.address[type]:{{ namada[type].ports.ethereum_rpc_port }}"
 channel_buffer_size = 1000
