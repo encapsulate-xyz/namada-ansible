@@ -121,5 +121,5 @@ version = "v0"
 
 [ledger.ethereum_bridge]
 mode = "RemoteEndpoint"
-oracle_rpc_endpoint = "{{ node_type_settings.ethereum_rpc.address[type]:{{ namada[type].ports.ethereum_rpc_port }}"
+oracle_rpc_endpoint = "{{ node_type_settings.ethereum_rpc.address[type] }}:{{ namada[type].ports.ethereum_rpc_port }}"
 channel_buffer_size = 1000

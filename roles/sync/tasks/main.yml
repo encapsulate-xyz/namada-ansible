@@ -25,7 +25,6 @@
     state: absent
   with_items:
     - "{{ sync_data_dir }}"
-    - "{{ sync_wasm_dir }}"
     - "{{ sync_cometbft_data_dir }}"
 
 - name: Handle Download and extract snapshots

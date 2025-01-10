@@ -29,3 +29,10 @@ namada:
       rpc_port: 20557
       prometheus_port: 20560
       ethereum_rpc_port: 20545
+  fullnode:   
+    ports:
+      p2p_port: 20656
+      proxy_port: 20658
+      rpc_port: 20657
+      prometheus_port: 20660
+      ethereum_rpc_port: 20645
