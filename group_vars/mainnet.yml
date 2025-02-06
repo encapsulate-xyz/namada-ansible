@@ -4,6 +4,7 @@ namada:
   validator:
     version: v1.0.0
     chain_id: namada.5f5de2dd1b88cba30586420
-    network_config_server:
+    network_config_server: https://github.com/anoma/namada-mainnet-genesis/releases/download/mainnet-genesis
     cometbft:
       version: 0.37.11
+  snapshot_url: https://server-5.itrocket.net/mainnet/namada/namada_2025-02-06_800388_snap.tar.lz4
