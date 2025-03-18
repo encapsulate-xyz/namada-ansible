@@ -1,0 +1,2 @@
+tcp://04affb50117ef548cbf7d1ddb1e6416dec0645ae@namada-mainnet-seed.itrocket.net:14656
+tcp://3b03b50708d334529888eb4ea35606dcb460c8cf@namada-seed.mandragora.io:21656
