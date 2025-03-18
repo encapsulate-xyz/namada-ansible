@@ -1,7 +1,7 @@
 wasm_dir = "{{ node_wasm_dir }}"
 
 [ledger]
-genesis_time = "2024-12-05T23:07:03.000000000+00:00"
+genesis_time = "2024-12-03T15:00:00.000000000+00:00"
 chain_id = "{{ namada[type].chain_id }}"
 
 [ledger.shell]
@@ -61,7 +61,7 @@ flush_throttle_timeout = "100ms"
 max_packet_msg_payload_size = 1024
 send_rate = 5120000
 recv_rate = 5120000
-pex = {{ (node_sentry_settings.pex[type] | default(true)) | tojson }}
+pex = {{ (node_sentry_settings.pex[type] | default(false)) | tojson }}
 seed_mode = false
 private_peer_ids = "{{ node_sentry_settings.private_peer_ids[type] | default() }}"
 allow_duplicate_ip = false
