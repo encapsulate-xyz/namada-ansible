@@ -7,6 +7,8 @@ node_config_file_name: config.toml
 node_node_key_file_name: node_key.json
 node_priv_validator_key_file_name: priv_validator_key.json
 
+node_wallet_file_name: wallet.toml
+
 # binary names
 node_binaries:
   namada_default:
