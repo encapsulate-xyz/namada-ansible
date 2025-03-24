@@ -34,4 +34,4 @@ node_environment_general_file_path: "{{ node_env_dir }}/{{ node_environment_gene
 node_priv_validator_key_path: "{{ node_cometbft_config_dir }}/{{ node_priv_validator_key_file_name }}"
 node_node_key_path: "{{ node_cometbft_config_dir }}/{{ node_node_key_file_name }}"
 
-node_wallet_file_path: "{{ node_network_dir }}/{{ node_wallet_file_name }"
+node_wallet_file_path: "{{ node_network_dir }}/{{ node_wallet_file_name }}"
