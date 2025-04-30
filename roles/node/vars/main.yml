@@ -9,6 +9,8 @@ node_priv_validator_key_file_name: priv_validator_key.json
 
 node_wallet_file_name: wallet.toml
 
+node_migration_script_file_name: pre_phase4_migration.json
+
 # binary names
 node_binaries:
   namada_default:

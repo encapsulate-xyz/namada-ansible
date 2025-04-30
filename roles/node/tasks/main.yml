@@ -117,6 +117,16 @@
     group: root
     mode: "0644"
 
+- name: Copy phase 4 migration file
+  ansible.builtin.copy:
+    src: "{{ env }}/pre_phase4_migration.json"
+    dest: "{{ node_migration_script_file_path }}"
+    owner: "{{ service_identifier }}"
+    group: "{{ service_identifier }}"
+    mode: "0644"
+  notify:
+    - Restart service
+
 - name: Copy systemd service file
   ansible.builtin.template:
     src: "{{ env }}/systemd.service.j2"
