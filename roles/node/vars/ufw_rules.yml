@@ -13,6 +13,12 @@ node_ufw_rules:
       from: "{{ monitor_server_dns }}"
       comment: prometheus_port
 
+    - port: "{{ namada.validator.ports.rpc_port }}"
+      proto: tcp
+      rule: limit
+      from: "{{ monitor_server_dns }}"
+      comment: rpc_port
+
   fullnode:
     - port: "{{ namada.fullnode.ports.p2p_port }}"
       proto: tcp
