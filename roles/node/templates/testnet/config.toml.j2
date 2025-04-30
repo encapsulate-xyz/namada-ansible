@@ -28,7 +28,7 @@ abci = "socket"
 filter_peers = false
 
 [ledger.cometbft.rpc]
-laddr = "{{ node_type_settings.rpc.address[type] }}:{{ namada[type].ports.rpc_port }}"
+laddr = "{{ node_type_settings.rpc.address.fullnode }}:{{ namada[type].ports.rpc_port }}"
 cors_allowed_origins = []
 cors_allowed_methods = ["HEAD", "GET", "POST"]
 cors_allowed_headers = ["Origin", "Accept", "Content-Type", "X-Requested-With", "X-Server-Time"]
