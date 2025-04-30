@@ -9,7 +9,7 @@ base_dir = "{{ node_network_dir }}"
 storage_read_past_height_limit = 3600
 db_dir = "{{ node_data_dir }}"
 cometbft_dir = "{{ node_cometbft_dir }}"
-tendermint_mode = "Validator"
+tendermint_mode = "Full"
 
 [ledger.cometbft]
 proxy_app = "{{ node_type_settings.proxy_app.address.default }}:{{ namada[type].ports.proxy_port }}"
