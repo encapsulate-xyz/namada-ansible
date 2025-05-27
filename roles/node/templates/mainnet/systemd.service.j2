@@ -6,8 +6,10 @@ User={{ service_identifier }}
 Group={{ service_identifier }}
 WorkingDirectory={{ node_home_dir }}
 EnvironmentFile={{ node_environment_general_file_path }}
-ExecStart={{ node_bin_dir }}/{{ service_identifier }} node ledger run-until \
-    --block-height 2176000 --halt --base-dir {{ node_config_dir }}
+ExecStart={{ node_bin_dir }}/{{ service_identifier }} node ledger run \
+    --path {{ node_migration_script_file_path }} \
+    --hash 83d7b4fc38f135adfae2f6219bf13c1bbf9022609fb61124be1ff0c5f79e1d7e --height 2176020 \
+    --base-dir {{ node_config_dir }}
 Restart=always
 RestartSec=4
 LimitNOFILE=65536
