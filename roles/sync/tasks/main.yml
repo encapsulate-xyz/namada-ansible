@@ -26,13 +26,14 @@
   with_items:
     - "{{ sync_data_dir }}"
     - "{{ sync_cometbft_data_dir }}"
+  when: clean_database | default(false) | bool
 
 - name: Handle Download and extract snapshots
   block:
     - name: Download and Extract snapshot
       ansible.builtin.shell: |
         set -o pipefail
-        curl -o - -L {{ snapshot_url | default(vars[project].snapshot_url) }} | lz4 -c -d - | tar -x -C {{ sync_home_dir }}
+        curl -o - -L {{ snapshot_url | default(vars[project].snapshot_url) }} | lz4 -c -d - | tar -x -C {{ sync_dir | default(sync_home_dir) }}
       async: 10000
       poll: 10
       args:
