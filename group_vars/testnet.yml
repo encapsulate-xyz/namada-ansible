@@ -2,7 +2,7 @@
 # maintains versions and can overwrite all.yml
 namada:
   validator:
-    version: v101.1.2
+    version: v101.1.1
     chain_id: housefire-alpaca.cc0d3e0c033be
     network_config_server: https://github.com/vknowable/namada-campfire/releases/download/housefire-alpaca
     cometbft:
