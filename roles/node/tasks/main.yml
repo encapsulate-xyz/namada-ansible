@@ -33,24 +33,6 @@
       - extracted_path: "{{ node_binaries.cometbft_default.default_binary_name }}"
         dest_path: "{{ node_bin_dir }}/{{ node_binaries.cometbft_default.default_binary_name }}"
 
-- name: Install Namada
-  ansible.builtin.include_tasks: tasks/extract_binary.yml
-  vars:
-    arch_details: "{{ ansible_system }}-{{ ansible_architecture }}"
-    build_suffix_url: "{{ namada[type].version }}/{{ node_binaries.namada_default.default_binary_name }}-{{ namada[type].version }}"
-    source_url: "{{ namada.source_url }}"
-    suffix_url: "{{ build_suffix_url }}-{{ arch_details }}.{{ namada.file_extension }}"
-    extracted_dir: "{{ node_binaries.namada_default.default_binary_name }}-{{ namada[type].version }}-{{ arch_details }}"
-    path_mapping:
-      - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_default.default_binary_name }}"
-        dest_path: "{{ node_bin_dir }}/{{ service_identifier }}"
-      - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_node.default_binary_name }}"
-        dest_path: "{{ node_bin_dir }}/{{ node_binaries.namada_node.default_binary_name }}"
-      - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_client.default_binary_name }}"
-        dest_path: "{{ node_bin_dir }}/{{ node_binaries.namada_client.default_binary_name }}"
-      - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_worker.default_binary_name }}"
-        dest_path: "{{ node_bin_dir }}/{{ node_binaries.namada_worker.default_binary_name }}"
-
 - name: Join network
   ansible.builtin.command: >
     {{ node_bin_dir }}/{{ service_identifier }} client utils join-network

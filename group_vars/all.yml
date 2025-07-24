@@ -9,7 +9,12 @@ ansible_port: 8192
 architecture_map:
   x86_64: amd64
   aarch64: arm64
+
 tmp_dir: /tmp
+
+rust:
+  root: /opt
+  path: /opt/cargo
 
 default_node_types:
   - validator
@@ -20,8 +25,7 @@ cometbft:
   file_extension: tar.gz
 
 namada:
-  source_url: https://github.com/anoma/namada/releases/download
-  file_extension: tar.gz
+  source_url: https://github.com/anoma/namada
   validator:   
     ports:
       p2p_port: 20556
