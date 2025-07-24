@@ -7,4 +7,6 @@ namada:
     network_config_server: https://github.com/anoma/namada-mainnet-genesis/releases/download/mainnet-genesis
     cometbft:
       version: 0.37.15
+    rust:
+      version: 1.87.0
   snapshot_url: https://server-5.itrocket.net/mainnet/namada/namada_2025-02-12_875154_snap.tar.lz4

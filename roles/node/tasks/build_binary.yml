@@ -1,0 +1,49 @@
+---
+- name: Ensure tmp directory exists
+  ansible.builtin.file:
+    path: "{{ tmp_dir }}"
+    state: directory
+    mode: "1777"
+
+- name: Clone the repository to /tmp
+  ansible.builtin.git:
+    repo: "{{ namada[type].source_url }}"
+    dest: "{{ tmp_dir }}/{{ project }}"
+    version: "{{ namada[type].version }}"
+    force: true
+
+- name: Build the binary
+  community.general.make:
+    chdir: "{{ tmp_dir }}/{{ project }}"
+    target: install
+  environment:
+    PATH: "{{ rust.path }}/bin:{{ ansible_env.PATH }}"
+    RUSTUP_HOME: "{{ rust.root }}/cargo"
+    CARGO_HOME: "{{ rust.root }}/cargo"
+
+- name: Copy the extracted binaries to the target directory
+  vars:
+    extracted_dir: "{{ tmp_dir }}/{{ project }}/target/release"
+  ansible.builtin.copy:
+    src: "{{ item.extracted_path }}"
+    dest: "{{ item.dest_path }}"
+    mode: "0755"
+    owner: root
+    group: root
+    remote_src: true
+  loop:
+    - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_default.default_binary_name }}"
+      dest_path: "{{ node_bin_dir }}/{{ service_identifier }}"
+    - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_node.default_binary_name }}"
+      dest_path: "{{ node_bin_dir }}/{{ node_binaries.namada_node.default_binary_name }}"
+    - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_client.default_binary_name }}"
+      dest_path: "{{ node_bin_dir }}/{{ node_binaries.namada_client.default_binary_name }}"
+    - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_worker.default_binary_name }}"
+      dest_path: "{{ node_bin_dir }}/{{ node_binaries.namada_worker.default_binary_name }}"
+  notify:
+    - Restart service
+
+- name: Clean up the temporary repository directory
+  ansible.builtin.file:
+    path: "{{ tmp_dir }}/{{ project }}"
+    state: absent
