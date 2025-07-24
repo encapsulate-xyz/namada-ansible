@@ -33,6 +33,9 @@
       - extracted_path: "{{ node_binaries.cometbft_default.default_binary_name }}"
         dest_path: "{{ node_bin_dir }}/{{ node_binaries.cometbft_default.default_binary_name }}"
 
+- name: Include build binary task
+  ansible.builtin.include_tasks: build_binary.yml
+
 - name: Join network
   ansible.builtin.command: >
     {{ node_bin_dir }}/{{ service_identifier }} client utils join-network
