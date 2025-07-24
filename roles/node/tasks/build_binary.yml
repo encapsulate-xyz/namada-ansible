@@ -7,7 +7,7 @@
 
 - name: Clone the repository to /tmp
   ansible.builtin.git:
-    repo: "{{ namada[type].source_url }}"
+    repo: "{{ namada.source_url }}"
     dest: "{{ tmp_dir }}/{{ project }}"
     version: "{{ namada[type].version }}"
     force: true
