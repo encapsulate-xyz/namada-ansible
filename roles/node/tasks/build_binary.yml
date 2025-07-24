@@ -1,4 +1,19 @@
 ---
+- name: Install apt packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+  loop:
+    - build-essential
+    - clang-tools-14
+    - git
+    - libssl-dev
+    - pkg-config
+    - protobuf-compiler
+    - libudev-dev
+
 - name: Ensure tmp directory exists
   ansible.builtin.file:
     path: "{{ tmp_dir }}"
