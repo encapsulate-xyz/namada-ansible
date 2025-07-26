@@ -8,5 +8,5 @@ namada:
     cometbft:
       version: 0.37.15
     rust:
-      version: 1.87.0
+      version: 1.85.1
   snapshot_url: https://server-5.itrocket.net/mainnet/namada/namada_2025-02-12_875154_snap.tar.lz4
