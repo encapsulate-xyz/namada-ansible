@@ -8,5 +8,5 @@ namada:
     cometbft:
       version: 0.37.15
     rust:
-      version: 1.87.0
+      version: 1.85.1
   snapshot_url: https://testnet.housefire.tududes.com/housefire-alpaca.cc0d3e0c033be_2025-02-12T00.00.tar.lz4
