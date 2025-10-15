@@ -1,0 +1,2 @@
+tcp://2601c10d03a2bafe5509106ce011889838a54531@seed.testnet.siuuu.click:26656
+tcp://0b77c9383fddb348b26aebc2329ea5a0817c70e5@housefire.seed.mandragora.io:26656
