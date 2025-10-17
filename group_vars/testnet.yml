@@ -6,7 +6,7 @@ namada:
     chain_id: housefire-alpaca.cc0d3e0c033be
     network_config_server: https://github.com/vknowable/namada-campfire/releases/download/housefire-alpaca
     cometbft:
-      version: 0.37.15
+      version: 0.37.16
     rust:
       version: 1.85.1
   snapshot_url: https://testnet.housefire.tududes.com/housefire-alpaca.cc0d3e0c033be_2025-02-12T00.00.tar.lz4

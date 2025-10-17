@@ -21,7 +21,7 @@ default_node_types:
   - default
 
 cometbft:
-  source_url: https://github.com/cometbft/cometbft/releases/download
+  source_url: https://github.com/heliaxdev/cometbft/releases/download
   file_extension: tar.gz
 
 namada:
