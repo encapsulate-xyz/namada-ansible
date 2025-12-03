@@ -1,0 +1,34 @@
+---
+- name: Download Cometbft binary
+  ansible.builtin.include_tasks: tasks/extract_binary.yml
+  vars:
+    arch_details: "{{ ansible_system | lower }}_{{ system_architecture }}"
+    build_suffix_url: "v{{ namada[type].cometbft.version }}/{{ node_binaries.cometbft_default.default_binary_name }}_{{ namada[type].cometbft.version }}"
+    source_url: "{{ cometbft.source_url }}"
+    suffix_url: "{{ build_suffix_url }}_{{ arch_details }}.{{ cometbft.file_extension }}"
+    path_mapping:
+      - extracted_path: "{{ node_binaries.cometbft_default.default_binary_name }}"
+        dest_path: "{{ node_bin_dir }}/{{ node_binaries.cometbft_default.default_binary_name }}"
+
+- name: Download namada binaries
+  ansible.builtin.include_tasks: tasks/extract_binary.yml
+  when: build_binaries is not defined or not build_binaries
+  vars:
+    arch_details: "{{ ansible_system }}-{{ ansible_architecture }}"
+    build_suffix_url: "{{ namada[type].version }}/{{ node_binaries.namada_default.default_binary_name }}-{{ namada[type].version }}"
+    source_url: "{{ namada.source_url }}/releases/download"
+    suffix_url: "{{ build_suffix_url }}-{{ arch_details }}.{{ namada.file_extension }}"
+    extracted_dir: "{{ node_binaries.namada_default.default_binary_name }}-{{ namada[type].version }}-{{ arch_details }}"
+    path_mapping:
+      - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_default.default_binary_name }}"
+        dest_path: "{{ node_bin_dir }}/{{ service_identifier }}"
+      - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_node.default_binary_name }}"
+        dest_path: "{{ node_bin_dir }}/{{ node_binaries.namada_node.default_binary_name }}"
+      - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_client.default_binary_name }}"
+        dest_path: "{{ node_bin_dir }}/{{ node_binaries.namada_client.default_binary_name }}"
+      - extracted_path: "{{ extracted_dir }}/{{ node_binaries.namada_worker.default_binary_name }}"
+        dest_path: "{{ node_bin_dir }}/{{ node_binaries.namada_worker.default_binary_name }}"
+
+- name: Include build binaries task
+  ansible.builtin.include_tasks: build_binaries.yml
+  when: build_binaries is defined and build_binaries
