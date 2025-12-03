@@ -6,8 +6,13 @@ User={{ service_identifier }}
 Group={{ service_identifier }}
 WorkingDirectory={{ node_home_dir }}
 EnvironmentFile={{ node_environment_general_file_path }}
+{% if halt_height is defined %}
+ExecStart={{ node_bin_dir }}/{{ service_identifier }} node \
+ledger run-until --block-height {{ halt_height }} --halt --base-dir {{ node_config_dir }}
+{% else %}
 ExecStart={{ node_bin_dir }}/{{ service_identifier }} node \
 ledger run --base-dir {{ node_config_dir }}
+{% endif %}
 Restart=always
 RestartSec=4
 LimitNOFILE=65536

@@ -36,7 +36,7 @@
     RUSTUP_HOME: "{{ rust.root }}/cargo"
     CARGO_HOME: "{{ rust.root }}/cargo"
 
-- name: Copy the extracted binaries to the target directory
+- name: Copy the built binaries to the target directory
   vars:
     extracted_dir: "{{ tmp_dir }}/{{ project }}/target/release"
   ansible.builtin.copy:

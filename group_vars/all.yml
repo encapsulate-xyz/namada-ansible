@@ -26,6 +26,7 @@ cometbft:
 
 namada:
   source_url: https://github.com/anoma/namada
+  file_extension: tar.gz
   validator:   
     ports:
       p2p_port: 20556

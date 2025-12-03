@@ -22,19 +22,8 @@
     directories: "{{ node_directories }}"
     log_file_path: "{{ node_log_file_path }}"
 
-- name: Install Cometbft
-  ansible.builtin.include_tasks: tasks/extract_binary.yml
-  vars:
-    arch_details: "{{ ansible_system | lower }}_{{ system_architecture }}"
-    build_suffix_url: "v{{ namada[type].cometbft.version }}/{{ node_binaries.cometbft_default.default_binary_name }}_{{ namada[type].cometbft.version }}"
-    source_url: "{{ cometbft.source_url }}"
-    suffix_url: "{{ build_suffix_url }}_{{ arch_details }}.{{ cometbft.file_extension }}"
-    path_mapping: 
-      - extracted_path: "{{ node_binaries.cometbft_default.default_binary_name }}"
-        dest_path: "{{ node_bin_dir }}/{{ node_binaries.cometbft_default.default_binary_name }}"
-
-- name: Include build binary task
-  ansible.builtin.include_tasks: build_binary.yml
+- name: Install binaries
+  ansible.builtin.include_tasks: install_binaries/main.yml
 
 - name: Join network
   ansible.builtin.command: >
