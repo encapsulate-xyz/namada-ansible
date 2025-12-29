@@ -15,7 +15,7 @@ ledger run --base-dir {{ node_config_dir }}
 {% endif %}
 Restart=always
 RestartSec=4
-LimitNOFILE=65536
+LimitNOFILE=1048576
 MemoryMax=64G
 StandardOutput=append:{{ node_log_file_path }}
 StandardError=inherit
