@@ -6,5 +6,5 @@ all:
   children:
     namada:
       hosts:
-        validator.namada.mainnet.encapsulate.xyz:
+        ts.validator.namada.mainnet.encapsulate.xyz:
           type: validator
