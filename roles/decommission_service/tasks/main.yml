@@ -4,19 +4,17 @@
     - name: Include UFW vars file
       ansible.builtin.include_vars:
         file: >-
-          {{ 'roles/node/vars/' ~ env ~ '/' ~ project ~ '.yml'
-             if type in ['fullnode', 'validator']
-             else 'roles/' ~ (role_folder_name | default(type)) ~ '/vars/ufw_rules.yml' }}
+          {{ 'roles/node/vars/ufw_rules.yml' }}
     
-    - name: Get UFW rules variable
+    - name: Get UFW rules variable name
       ansible.builtin.set_fact:
-        ufw_rules_var: "{{ lookup('vars', vars.keys() | select('search', '_ufw_rules$') | first) }}"
+        ufw_rules_var_name: "{{ q('varnames', '_ufw_rules$') | first | default('') }}"
 
     - name: Extract UFW rules
       ansible.builtin.set_fact:
         ufw_rules_list: >-
-          {{ ufw_rules_var[type] if (ufw_rules_var is mapping and type in ufw_rules_var)
-            else ufw_rules_var if ufw_rules_var is sequence
+          {{ lookup('vars', ufw_rules_var_name)[type] if (ufw_rules_var_name != '' and lookup('vars', ufw_rules_var_name) is mapping and type in lookup('vars', ufw_rules_var_name))
+            else lookup('vars', ufw_rules_var_name) if (ufw_rules_var_name != '' and lookup('vars', ufw_rules_var_name) is sequence)
             else [] }}
 
     - name: Apply UFW rules
