@@ -1,0 +1,71 @@
+---
+- name: Include UFW vars and apply ufw rules
+  block:
+    - name: Include UFW vars file
+      ansible.builtin.include_vars:
+        file: >-
+          {{ 'roles/node/vars/' ~ env ~ '/' ~ project ~ '.yml'
+             if type in ['fullnode', 'validator']
+             else 'roles/' ~ (role_folder_name | default(type)) ~ '/vars/ufw_rules.yml' }}
+    
+    - name: Get UFW rules variable
+      ansible.builtin.set_fact:
+        ufw_rules_var: "{{ lookup('vars', vars.keys() | select('search', '_ufw_rules$') | first) }}"
+
+    - name: Extract UFW rules
+      ansible.builtin.set_fact:
+        ufw_rules_list: >-
+          {{ ufw_rules_var[type] if (ufw_rules_var is mapping and type in ufw_rules_var)
+            else ufw_rules_var if ufw_rules_var is sequence
+            else [] }}
+
+    - name: Apply UFW rules
+      ansible.builtin.include_tasks: tasks/apply_ufw_rules.yml
+      loop: "{{ ufw_rules_list }}"
+      vars:
+        sunset_delete_rule: true
+
+  rescue:
+    - name: No UFW vars file found
+      ansible.builtin.debug:
+        msg: "No UFW vars file found, skipping UFW rules application"
+
+- name: Stop and disable systemd service and timer
+  ansible.builtin.service:
+    name: "{{ service_identifier }}.{{ item }}"
+    state: stopped
+    enabled: false
+  loop:
+    - "service"
+    - "timer"
+  ignore_errors: true
+
+- name: Delete home directory
+  ansible.builtin.file:
+    path: "/opt/{{ service_identifier }}"
+    state: absent
+
+- name: Delete systemd service and timer files
+  ansible.builtin.file:
+    path: "/etc/systemd/system/{{ service_identifier }}.{{ item }}"
+    state: absent
+  loop:
+    - "service"
+    - "timer"
+
+- name: Delete user
+  ansible.builtin.user:
+    name: "{{ service_identifier }}"
+    state: absent
+    remove: true
+
+- name: Delete group
+  ansible.builtin.group:
+    name: "{{ service_identifier }}"
+    state: absent
+
+- name: Delete project group
+  ansible.builtin.group:
+    name: "{{ project }}"
+    state: absent
+  when: delete_project_group | default(false) | bool
