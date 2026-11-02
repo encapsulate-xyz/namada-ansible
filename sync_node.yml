@@ -26,3 +26,15 @@
         - name: Include sync role
           ansible.builtin.include_role:
             name: sync
+            public: true
+
+  post_tasks:
+    - name: Verify node
+      when: type in allowed_node_types
+      block:
+        - name: Include verify service task
+          ansible.builtin.include_tasks: tasks/verify_service.yml
+          vars:
+            # same path as node_log_file_path in the node role
+            log_file_path: "{{ sync_home_dir }}/log/{{ service_identifier }}.log"
+            health_url: "http://localhost:{{ namada[type].ports.rpc_port }}/health"
